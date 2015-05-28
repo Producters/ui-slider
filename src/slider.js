@@ -41,7 +41,7 @@ angular.module('ui.slider', []).value('uiSliderConfig',{}).directive('uiSlider',
                         }
                     });
 
-                    elm.slider(options);
+                    elm.labeledslider(options);
                     init = angular.noop;
                 };
 
@@ -59,14 +59,14 @@ angular.module('ui.slider', []).value('uiSliderConfig',{}).directive('uiSlider',
                 });
                 attrs.$observe('disabled', function(newVal) {
                     init();
-                    elm.slider('option', 'disabled', !!newVal);
+                    elm.labeledslider('option', 'disabled', !!newVal);
                 });
 
                 // Watch ui-slider (byVal) for changes and update
                 scope.$watch(attrs.uiSlider, function(newVal) {
                     init();
                     if(newVal !== undefined) {
-                      elm.slider('option', newVal);
+                      elm.labeledslider('option', newVal);
                     }
                 }, true);
 
@@ -113,7 +113,7 @@ angular.module('ui.slider', []).value('uiSliderConfig',{}).directive('uiSlider',
 
                     if (valuesChanged) {
                         setTimeout(function() {
-                            elm.slider('value', ui.values || ui.value);
+                            elm.labeledslider('value', ui.values || ui.value);
                         }, 0);
 
                         return false;
@@ -160,7 +160,7 @@ angular.module('ui.slider', []).value('uiSliderConfig',{}).directive('uiSlider',
                         prevRangeValues.max = ngModel.$viewValue[1];
 
                     }
-                    elm.slider(method, ngModel.$viewValue);
+                    elm.labeledslider(method, ngModel.$viewValue);
                 };
 
                 scope.$watch(attrs.ngModel, function() {
@@ -171,7 +171,7 @@ angular.module('ui.slider', []).value('uiSliderConfig',{}).directive('uiSlider',
 
                 function destroy() {
                     if (elm.hasClass('ui-slider')) {
-                        elm.slider('destroy');
+                        elm.labeledslider('destroy');
                     }
                 }
 
@@ -189,13 +189,13 @@ angular.module('ui.slider', []).value('uiSliderConfig',{}).directive('uiSlider',
                         options[property] = attrs[property];
                     }
                 });
-                if (angular.isDefined(options['tick']) && angular.isDefined(options['step'])) {
-                    var total = parseInt(parseInt(options['max'])/parseInt(options['step']));
-                    for (var i = total; i >= 0; i--) {
-                        var left = ((i / total) * 100) + '%';
-                        $("<div/>").addClass("ui-slider-tick").appendTo(element).css({left: left});
-                    };
-                }
+                //if (angular.isDefined(options['tick']) && angular.isDefined(options['step'])) {
+                //    var total = parseInt(parseInt(options['max'])/parseInt(options['step']));
+                //    for (var i = total; i >= 0; i--) {
+                //        var left = ((i / total) * 100) + '%';
+                //        $("<div/>").addClass("ui-slider-tick").appendTo(element).css({left: left});
+                //    };
+                //}
             }
 
             return {
