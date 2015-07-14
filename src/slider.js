@@ -23,6 +23,68 @@ angular.module('ui.slider', []).value('uiSliderConfig',{}).directive('uiSlider',
                 var properties = ['min', 'max', 'step', 'lowerBound', 'upperBound'];
                 var useDecimals = (!angular.isUndefined(attrs.useDecimals)) ? true : false;
 
+                var onSlideAngular = function (event, ui) {
+                    var valuesChanged;
+
+                    if (ui.values) {
+                        var boundedValues = ui.values.slice();
+
+                        if (options.lowerBound && boundedValues[0] < options.lowerBound) {
+                            boundedValues[0] = Math.max(boundedValues[0], options.lowerBound);
+                        }
+                        if (options.upperBound && boundedValues[1] > options.upperBound) {
+                            boundedValues[1] = Math.min(boundedValues[1], options.upperBound);
+                        }
+
+                        if (boundedValues[0] !== ui.values[0] || boundedValues[1] !== ui.values[1]) {
+                            valuesChanged = true;
+                            ui.values = boundedValues;
+                        }
+                    } else {
+                        var boundedValue = ui.value;
+
+                        if (options.lowerBound && boundedValue < options.lowerBound) {
+                            boundedValue = Math.max(boundedValue, options.lowerBound);
+                        }
+                        if (options.upperBound && boundedValue > options.upperBound) {
+                            boundedValue = Math.min(boundedValue, options.upperBound);
+                        }
+
+                        if (boundedValue !== ui.value) {
+                            valuesChanged = true;
+                            ui.value = boundedValue;
+                        }
+                    }
+
+                    ngModel.$setViewValue(ui.values || ui.value);
+                    scope.$apply();
+
+                    if (valuesChanged) {
+                        setTimeout(function() {
+                            elm.labeledslider('value', ui.values || ui.value);
+                        }, 0);
+
+                        return false;
+                    }
+                };
+
+                if (options.slide) {
+
+                    var onSlide = options.slide;
+
+                    options.slide = function (event, ui) {
+                        onSlide(event, ui);
+                        onSlideAngular(event, ui);
+                    };
+
+                } else {
+
+                    options.slide = function (event, ui) {
+                        onSlideAngular(event, ui);
+                    };
+
+                }
+
                 var init = function() {
                     // When ngModel is assigned an array of values then range is expected to be true.
                     // Warn user and change range to true else an error occurs when trying to drag handle
@@ -72,53 +134,6 @@ angular.module('ui.slider', []).value('uiSliderConfig',{}).directive('uiSlider',
 
                 // Late-bind to prevent compiler clobbering
                 $timeout(init, 0, true);
-
-                // Update model value from slider
-                elm.bind('slide', function(event, ui) {
-                    var valuesChanged;
-
-                    if (ui.values) {
-                        var boundedValues = ui.values.slice();
-
-                        if (options.lowerBound && boundedValues[0] < options.lowerBound) {
-                            boundedValues[0] = Math.max(boundedValues[0], options.lowerBound);
-                        }
-                        if (options.upperBound && boundedValues[1] > options.upperBound) {
-                            boundedValues[1] = Math.min(boundedValues[1], options.upperBound);
-                        }
-
-                        if (boundedValues[0] !== ui.values[0] || boundedValues[1] !== ui.values[1]) {
-                            valuesChanged = true;
-                            ui.values = boundedValues;
-                        }
-                    } else {
-                        var boundedValue = ui.value;
-
-                        if (options.lowerBound && boundedValue < options.lowerBound) {
-                            boundedValue = Math.max(boundedValue, options.lowerBound);
-                        }
-                        if (options.upperBound && boundedValue > options.upperBound) {
-                            boundedValue = Math.min(boundedValue, options.upperBound);
-                        }
-
-                        if (boundedValue !== ui.value) {
-                            valuesChanged = true;
-                            ui.value = boundedValue;
-                        }
-                    }
-
-
-                    ngModel.$setViewValue(ui.values || ui.value);
-                    scope.$apply();
-
-                    if (valuesChanged) {
-                        setTimeout(function() {
-                            elm.labeledslider('value', ui.values || ui.value);
-                        }, 0);
-
-                        return false;
-                    }
-                });
 
                 // Update slider from model value
                 ngModel.$render = function() {
