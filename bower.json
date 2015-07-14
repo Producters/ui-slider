@@ -21,6 +21,6 @@
     "angular": ">=1.0.0 <1.4.2",
     "jquery-ui": "~1.10.x",
     "jquery": ">= 1.9",
-    "jquery-ui-extensions": "git@github.com:bseth99/jquery-ui-extensions.git#~1.1.1"
+    "jquery-ui-extensions": "https://github.com/bseth99/jquery-ui-extensions.git#~1.1.1"
   }
 }
